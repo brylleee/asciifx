@@ -1,6 +1,6 @@
 package dithering
 
-import "asciifx/asciifx"
+import "github.com/brylleee/asciifx/asciifx"
 
 type BayerMatrix struct{}
 

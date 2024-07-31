@@ -1,6 +1,6 @@
 package asciify
 
-import "asciifx/asciifx"
+import "github.com/brylleee/asciifx/asciifx"
 
 type moons struct {
 	SupportsColor bool
