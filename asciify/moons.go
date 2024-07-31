@@ -2,19 +2,16 @@ package asciify
 
 import "github.com/brylleee/asciifx/asciifx"
 
-type moons struct {
-	SupportsColor bool
-	ColorRange    asciifx.RGBI
-}
+type Moons struct{}
 
-func UseMoons() moons {
-	return moons{
+func UseMoons() asciifx.AsciifyMethod {
+	return asciifx.AsciifyMethod{
 		SupportsColor: false,
 		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 2},
 	}
 }
 
-func (moons moons) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
+func (moons Moons) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
 	var result [][]rune = make([][]rune, asciifx.Height)
 	var line []rune = make([]rune, 0)
 

@@ -2,19 +2,16 @@ package asciify
 
 import "github.com/brylleee/asciifx/asciifx"
 
-type braille struct {
-	SupportsColor bool
-	ColorRange    asciifx.RGBI
-}
+type Braille struct{}
 
-func UseBraille() braille {
-	return braille{
+func UseBraille() asciifx.AsciifyMethod {
+	return asciifx.AsciifyMethod{
 		SupportsColor: false,
 		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 2},
 	}
 }
 
-func (braille braille) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
+func (braille Braille) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
 	var result [][]rune = make([][]rune, asciifx.Height)
 	var line []rune = make([]rune, 0)
 

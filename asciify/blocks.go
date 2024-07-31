@@ -2,19 +2,16 @@ package asciify
 
 import "github.com/brylleee/asciifx/asciifx"
 
-type blocks struct {
-	SupportsColor bool
-	ColorRange    asciifx.RGBI
-}
+type Blocks struct{}
 
-func UseBlocks() blocks {
-	return blocks{
+func UseBlocks() asciifx.AsciifyMethod {
+	return asciifx.AsciifyMethod{
 		SupportsColor: false,
 		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 4},
 	}
 }
 
-func (blocks *blocks) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
+func (blocks Blocks) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
 	var result [][]rune = make([][]rune, asciifx.Height)
 	var line []rune = make([]rune, 0)
 	blockValues := []rune{'░', '▒', '▓', '█'}
