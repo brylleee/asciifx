@@ -10,11 +10,6 @@ import (
 	_ "image/png"
 )
 
-type AsciifyMethod struct {
-	SupportsColor bool
-	ColorRange    RGBI
-}
-
 // RGBI represents a single pixel's color values
 // Red, Green, Blue and Intensity (the grayscale value of the RGB)
 type RGBI struct {

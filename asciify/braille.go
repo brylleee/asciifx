@@ -2,10 +2,13 @@ package asciify
 
 import "github.com/brylleee/asciifx/asciifx"
 
-type Braille struct{}
+type Braille struct {
+	SupportsColor bool
+	ColorRange    asciifx.RGBI
+}
 
-func UseBraille() asciifx.AsciifyMethod {
-	return asciifx.AsciifyMethod{
+func UseBraille() Braille {
+	return Braille{
 		SupportsColor: false,
 		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 2},
 	}

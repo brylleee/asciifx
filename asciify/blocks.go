@@ -2,10 +2,13 @@ package asciify
 
 import "github.com/brylleee/asciifx/asciifx"
 
-type Blocks struct{}
+type Blocks struct {
+	SupportsColor bool
+	ColorRange    asciifx.RGBI
+}
 
-func UseBlocks() asciifx.AsciifyMethod {
-	return asciifx.AsciifyMethod{
+func UseBlocks() Blocks {
+	return Blocks{
 		SupportsColor: false,
 		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 4},
 	}

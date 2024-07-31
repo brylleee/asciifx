@@ -2,10 +2,13 @@ package asciify
 
 import "github.com/brylleee/asciifx/asciifx"
 
-type Moons struct{}
+type Moons struct {
+	SupportsColor bool
+	ColorRange    asciifx.RGBI
+}
 
-func UseMoons() asciifx.AsciifyMethod {
-	return asciifx.AsciifyMethod{
+func UseMoons() Moons {
+	return Moons{
 		SupportsColor: false,
 		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 2},
 	}
