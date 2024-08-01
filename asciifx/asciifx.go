@@ -37,7 +37,7 @@ type AsciiFx struct {
 // Load loads an image supplied as a string image path to an AsciiFx struct
 // It reads the image then initializes the width and height as well as
 // allocating the space it will work on
-func (asciifx *AsciiFx) Load(path string) {
+func (asciifx *AsciiFx) Load(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -46,7 +46,7 @@ func (asciifx *AsciiFx) Load(path string) {
 	// img, fmt, err
 	image, _, err := image.Decode(file)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	asciifx.Image = image
@@ -54,6 +54,8 @@ func (asciifx *AsciiFx) Load(path string) {
 	asciifx.Height = image.Bounds().Size().X
 
 	asciifx.allocateSpace()
+
+	return nil
 }
 
 // Conver converts the image loaded in AsciiFx to ascii arts employing user chose dithering alogrithm
