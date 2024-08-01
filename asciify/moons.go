@@ -15,7 +15,7 @@ func UseMoons() Moons {
 }
 
 func (moons Moons) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
-	var result [][]rune = make([][]rune, asciifx.Height)
+	var result [][]rune = make([][]rune, asciifx.Height/4)
 	var line []rune = make([]rune, 0)
 
 	moonValues := map[[4]uint]rune{

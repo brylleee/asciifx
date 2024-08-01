@@ -1,5 +1,5 @@
 package asciifx
 
-type DitherAlgorithm interface {
+type Dithering interface {
 	Dither(asciifx *AsciiFx)
 }

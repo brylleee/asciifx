@@ -26,8 +26,9 @@ type AsciiFx struct {
 	ImgPath string
 	Space   [][]RGBI
 
-	asciifychoice    Asciify
-	ditheralgochoice DitherAlgorithm
+	asciifychoice     Asciify
+	ditheralgochoice  Dithering
+	downsamplerchoice Downsampler
 
 	Width  int
 	Height int
@@ -57,12 +58,14 @@ func (asciifx *AsciiFx) Load(path string) {
 
 // Conver converts the image loaded in AsciiFx to ascii arts employing user chose dithering alogrithm
 // and asciify method. It returns the result as a 2D array of runes
-func (asciifx *AsciiFx) Convert(ditherAlgorithm DitherAlgorithm, asciify Asciify) [][]rune {
+func (asciifx *AsciiFx) Convert(ditherAlgorithm Dithering, downsampler Downsampler, asciify Asciify) [][]rune {
 	asciifx.extractColors()
 	asciifx.ditheralgochoice = ditherAlgorithm
+	asciifx.downsamplerchoice = downsampler
 	asciifx.asciifychoice = asciify
 
 	asciifx.ditheralgochoice.Dither(asciifx)
+	asciifx.downsamplerchoice.Downsample(asciifx)
 	return asciifx.asciifychoice.Asciify(asciifx)
 }
 
