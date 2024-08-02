@@ -50,8 +50,8 @@ func (asciifx *AsciiFx) Load(path string) error {
 	}
 
 	asciifx.Image = image
-	asciifx.Width = image.Bounds().Size().Y
-	asciifx.Height = image.Bounds().Size().X
+	asciifx.Width = image.Bounds().Size().X
+	asciifx.Height = image.Bounds().Size().Y
 
 	asciifx.allocateSpace()
 
@@ -84,9 +84,7 @@ func (asciifx *AsciiFx) extractColors() {
 
 // allocateSpace allocates Space values according to the width and height of the image loaded in AsciiFx
 func (asciifx *AsciiFx) allocateSpace() {
-	// Fill height
 	asciifx.Space = make([][]RGBI, asciifx.Height)
-	// Fill width
 	for i := 0; i < asciifx.Height; i++ {
 		asciifx.Space[i] = make([]RGBI, asciifx.Width)
 	}
