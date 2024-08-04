@@ -26,9 +26,9 @@ type AsciiFx struct {
 	ImgPath string
 	Space   [][]RGBI
 
-	asciifychoice     Asciify
-	ditheralgochoice  Dithering
-	downsamplerchoice Downsampler
+	AsciifyChoice     Asciify
+	DitheringChoice   Dithering
+	DownsamplerChoice Downsampler
 
 	Width  int
 	Height int
@@ -62,13 +62,13 @@ func (asciifx *AsciiFx) Load(path string) error {
 // and asciify method. It returns the result as a 2D array of runes
 func (asciifx *AsciiFx) Convert(ditherAlgorithm Dithering, downsampler Downsampler, asciify Asciify) [][]rune {
 	asciifx.extractColors()
-	asciifx.ditheralgochoice = ditherAlgorithm
-	asciifx.downsamplerchoice = downsampler
-	asciifx.asciifychoice = asciify
+	asciifx.DitheringChoice = ditherAlgorithm
+	asciifx.DownsamplerChoice = downsampler
+	asciifx.AsciifyChoice = asciify
 
-	asciifx.ditheralgochoice.Dither(asciifx)
-	asciifx.downsamplerchoice.Downsample(asciifx)
-	return asciifx.asciifychoice.Asciify(asciifx)
+	asciifx.DownsamplerChoice.Downsample(asciifx)
+	asciifx.DitheringChoice.Dither(asciifx)
+	return asciifx.AsciifyChoice.Asciify(asciifx)
 }
 
 // extractColors extracts every color in the image loaded in AsciiFx and stores it in the Space property of AsciiFx
@@ -88,4 +88,8 @@ func (asciifx *AsciiFx) allocateSpace() {
 	for i := 0; i < asciifx.Height; i++ {
 		asciifx.Space[i] = make([]RGBI, asciifx.Width)
 	}
+}
+
+func Remap[N int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64](x N, xmin N, xmax N, ymin N, ymax N) int {
+	return int(math.Round((float64(x-xmin)/float64(xmax-xmin))*float64(ymax-ymin) + float64(ymin)))
 }

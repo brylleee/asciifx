@@ -4,14 +4,30 @@ import "github.com/brylleee/asciifx/asciifx"
 
 type Moons struct {
 	SupportsColor bool
-	ColorRange    asciifx.RGBI
+	GrayColors    []uint8
+	RGBColors     [][]uint8
 }
 
 func UseMoons() Moons {
-	return Moons{
-		SupportsColor: false,
-		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 2},
+	const SUPPORTS_COLOR bool = false
+	const GRAY_COLORS_SIZE int = 2
+	var RGB_COLORS [][]uint8 = [][]uint8{}
+
+	grayColors := make([]uint8, GRAY_COLORS_SIZE)
+
+	for i := 0; i < GRAY_COLORS_SIZE; i++ {
+		grayColors[i] = uint8(255/GRAY_COLORS_SIZE) * uint8(i+1)
 	}
+
+	return Moons{
+		SupportsColor: SUPPORTS_COLOR,
+		GrayColors:    grayColors,
+		RGBColors:     RGB_COLORS,
+	}
+}
+
+func (moons Moons) Self() Moons {
+	return moons
 }
 
 func (moons Moons) Asciify(asciifx *asciifx.AsciiFx) [][]rune {

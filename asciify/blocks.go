@@ -4,14 +4,30 @@ import "github.com/brylleee/asciifx/asciifx"
 
 type Blocks struct {
 	SupportsColor bool
-	ColorRange    asciifx.RGBI
+	GrayColors    []uint8
+	RGBColors     [][]uint8
 }
 
 func UseBlocks() Blocks {
-	return Blocks{
-		SupportsColor: false,
-		ColorRange:    asciifx.RGBI{R: 0, G: 0, B: 0, I: 4},
+	const SUPPORTS_COLOR bool = false
+	const GRAY_COLORS_SIZE int = 4
+	var RGB_COLORS [][]uint8 = [][]uint8{}
+
+	grayColors := make([]uint8, GRAY_COLORS_SIZE)
+
+	for i := 0; i < GRAY_COLORS_SIZE; i++ {
+		grayColors[i] = uint8(255/GRAY_COLORS_SIZE) * uint8(i+1)
 	}
+
+	return Blocks{
+		SupportsColor: SUPPORTS_COLOR,
+		GrayColors:    grayColors,
+		RGBColors:     RGB_COLORS,
+	}
+}
+
+func (blocks Blocks) Self() Blocks {
+	return blocks
 }
 
 func (blocks Blocks) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
