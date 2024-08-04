@@ -1,6 +1,10 @@
 package asciify
 
-import "github.com/brylleee/asciifx/asciifx"
+import (
+	"math"
+
+	"github.com/brylleee/asciifx/asciifx"
+)
 
 type Moons struct {
 	SupportsColor bool
@@ -11,12 +15,12 @@ type Moons struct {
 func UseMoons() Moons {
 	const SUPPORTS_COLOR bool = false
 	const GRAY_COLORS_SIZE int = 2
-	var RGB_COLORS [][]uint8 = [][]uint8{}
+	var RGB_COLORS [][]uint8 = [][]uint8{{0, 0, 0}}
 
 	grayColors := make([]uint8, GRAY_COLORS_SIZE)
 
 	for i := 0; i < GRAY_COLORS_SIZE; i++ {
-		grayColors[i] = uint8(255/GRAY_COLORS_SIZE) * uint8(i+1)
+		grayColors[i] = uint8(math.Round(float64(255)/float64(GRAY_COLORS_SIZE-1))) * uint8(i)
 	}
 
 	return Moons{
@@ -26,8 +30,12 @@ func UseMoons() Moons {
 	}
 }
 
-func (moons Moons) Self() Moons {
-	return moons
+func (moons Moons) GetGrayColors() []uint8 {
+	return moons.GrayColors
+}
+
+func (moons Moons) GetRGBColors() [][]uint8 {
+	return moons.RGBColors
 }
 
 func (moons Moons) Asciify(asciifx *asciifx.AsciiFx) [][]rune {

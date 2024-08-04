@@ -1,6 +1,10 @@
 package asciify
 
-import "github.com/brylleee/asciifx/asciifx"
+import (
+	"math"
+
+	"github.com/brylleee/asciifx/asciifx"
+)
 
 type Blocks struct {
 	SupportsColor bool
@@ -11,12 +15,12 @@ type Blocks struct {
 func UseBlocks() Blocks {
 	const SUPPORTS_COLOR bool = false
 	const GRAY_COLORS_SIZE int = 4
-	var RGB_COLORS [][]uint8 = [][]uint8{}
+	var RGB_COLORS [][]uint8 = [][]uint8{{0, 0, 0}}
 
 	grayColors := make([]uint8, GRAY_COLORS_SIZE)
 
 	for i := 0; i < GRAY_COLORS_SIZE; i++ {
-		grayColors[i] = uint8(255/GRAY_COLORS_SIZE) * uint8(i+1)
+		grayColors[i] = uint8(math.Round(float64(255)/float64(GRAY_COLORS_SIZE-1))) * uint8(i)
 	}
 
 	return Blocks{
@@ -26,8 +30,12 @@ func UseBlocks() Blocks {
 	}
 }
 
-func (blocks Blocks) Self() Blocks {
-	return blocks
+func (blocks Blocks) GetGrayColors() []uint8 {
+	return blocks.GrayColors
+}
+
+func (blocks Blocks) GetRGBColors() [][]uint8 {
+	return blocks.RGBColors
 }
 
 func (blocks Blocks) Asciify(asciifx *asciifx.AsciiFx) [][]rune {

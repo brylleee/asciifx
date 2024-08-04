@@ -1,6 +1,10 @@
 package asciify
 
-import "github.com/brylleee/asciifx/asciifx"
+import (
+	"math"
+
+	"github.com/brylleee/asciifx/asciifx"
+)
 
 type Braille struct {
 	SupportsColor bool
@@ -11,12 +15,12 @@ type Braille struct {
 func UseBraille() Braille {
 	const SUPPORTS_COLOR bool = false
 	const GRAY_COLORS_SIZE int = 2
-	var RGB_COLORS [][]uint8 = [][]uint8{}
+	var RGB_COLORS [][]uint8 = [][]uint8{{0, 0, 0}}
 
 	grayColors := make([]uint8, GRAY_COLORS_SIZE)
 
 	for i := 0; i < GRAY_COLORS_SIZE; i++ {
-		grayColors[i] = uint8(255/GRAY_COLORS_SIZE) * uint8(i+1)
+		grayColors[i] = uint8(math.Round(float64(255)/float64(GRAY_COLORS_SIZE-1))) * uint8(i)
 	}
 
 	return Braille{
@@ -26,8 +30,12 @@ func UseBraille() Braille {
 	}
 }
 
-func (braille Braille) Self() Braille {
-	return braille
+func (braille Braille) GetGrayColors() []uint8 {
+	return braille.GrayColors
+}
+
+func (braille Braille) GetRGBColors() [][]uint8 {
+	return braille.RGBColors
 }
 
 func (braille Braille) Asciify(asciifx *asciifx.AsciiFx) [][]rune {

@@ -17,11 +17,11 @@ func getColorDistance(originalColor asciifx.RGBI, RGBColor []uint8) int {
 	greenDifference := int(originalColor.G - RGBColor[1])
 	blueDifference := int(originalColor.B - RGBColor[2])
 
-	return redDifference*redDifference + greenDifference*greenDifference + blueDifference*blueDifference
+	return (redDifference * redDifference) + (greenDifference * greenDifference) + (blueDifference * blueDifference)
 }
 
 func getClosestColor(color asciifx.RGBI, rgbPalette [][]uint8, grayPalette []uint8) asciifx.RGBI {
-	closestMatch := 255*255 + 255*255 + 255*255 + 1
+	closestMatch := (255 * 255) + (255 * 255) + (255 * 255) + 1
 	rgbMatchIndex, grayMatchIndex := 0, 0
 
 	for idx, i := range rgbPalette {
@@ -31,7 +31,8 @@ func getClosestColor(color asciifx.RGBI, rgbPalette [][]uint8, grayPalette []uin
 		}
 	}
 
-	grayMatchIndex = int(color.I) / int(255/(len(grayPalette)))
+	grayStepSize := float64(255) / float64(len(grayPalette)-1)
+	grayMatchIndex = int(math.Round(float64(color.I) / grayStepSize))
 
 	return asciifx.RGBI{
 		R: rgbPalette[rgbMatchIndex][0],
@@ -45,40 +46,42 @@ func (floydSteinberg FloydSteinberg) Dither(asciifxObj *asciifx.AsciiFx) {
 	for i := 0; i < asciifxObj.Height; i++ {
 		for j := 0; j < asciifxObj.Width; j++ {
 			oldValues := asciifxObj.Space[i][j]
-			newValues := getClosestColor(asciifxObj.Space[i][j], asciifxObj.AsciifyChoice.Self().RGBColor, asciifxObj.AsciifyChoice.Self().GrayColors)
+			newValues := getClosestColor(oldValues, asciifxObj.AsciifyChoice.GetRGBColors(), asciifxObj.AsciifyChoice.GetGrayColors())
 
-			errors := asciifx.RGBI{
-				R: oldValues.R - newValues.R,
-				G: oldValues.G - newValues.G,
-				B: oldValues.B - newValues.B,
-				I: oldValues.I - newValues.I,
+			asciifxObj.Space[i][j] = newValues
+
+			errors := []int{
+				int(oldValues.R) - int(newValues.R),
+				int(oldValues.G) - int(newValues.G),
+				int(oldValues.B) - int(newValues.B),
+				int(oldValues.I) - int(newValues.I),
 			}
 
-			if j < asciifxObj.Width-1 {
-				asciifxObj.Space[i][j+1].R += uint8(math.Round(float64(errors.R) * 7.0 / 16.0))
-				asciifxObj.Space[i][j+1].G += uint8(math.Round(float64(errors.G) * 7.0 / 16.0))
-				asciifxObj.Space[i][j+1].B += uint8(math.Round(float64(errors.B) * 7.0 / 16.0))
-				asciifxObj.Space[i][j+1].I += uint8(math.Round(float64(errors.I) * 7.0 / 16.0))
+			if j+1 < asciifxObj.Width {
+				asciifxObj.Space[i][j+1].R = asciifx.Clamp(int(asciifxObj.Space[i][j+1].R) + int(math.Round(float64(errors[0])*7.0/16.0)))
+				asciifxObj.Space[i][j+1].G = asciifx.Clamp(int(asciifxObj.Space[i][j+1].G) + int(math.Round(float64(errors[1])*7.0/16.0)))
+				asciifxObj.Space[i][j+1].B = asciifx.Clamp(int(asciifxObj.Space[i][j+1].B) + int(math.Round(float64(errors[2])*7.0/16.0)))
+				asciifxObj.Space[i][j+1].I = asciifx.Clamp(int(asciifxObj.Space[i][j+1].I) + int(math.Round(float64(errors[3])*7.0/16.0)))
 			}
 
-			if i < asciifxObj.Height-1 {
+			if i+1 < asciifxObj.Height {
 				if j > 0 {
-					asciifxObj.Space[i+1][j-1].R += uint8(math.Round(float64(errors.R) * 3.0 / 16.0))
-					asciifxObj.Space[i+1][j-1].G += uint8(math.Round(float64(errors.G) * 3.0 / 16.0))
-					asciifxObj.Space[i+1][j-1].B += uint8(math.Round(float64(errors.B) * 3.0 / 16.0))
-					asciifxObj.Space[i+1][j-1].I += uint8(math.Round(float64(errors.I) * 3.0 / 16.0))
+					asciifxObj.Space[i+1][j-1].R = asciifx.Clamp(int(asciifxObj.Space[i+1][j-1].R) + int(math.Round(float64(errors[0])*3.0/16.0)))
+					asciifxObj.Space[i+1][j-1].G = asciifx.Clamp(int(asciifxObj.Space[i+1][j-1].G) + int(math.Round(float64(errors[1])*3.0/16.0)))
+					asciifxObj.Space[i+1][j-1].B = asciifx.Clamp(int(asciifxObj.Space[i+1][j-1].B) + int(math.Round(float64(errors[2])*3.0/16.0)))
+					asciifxObj.Space[i+1][j-1].I = asciifx.Clamp(int(asciifxObj.Space[i+1][j-1].I) + int(math.Round(float64(errors[3])*3.0/16.0)))
 				}
 
-				asciifxObj.Space[i+1][j].R += uint8(math.Round(float64(errors.R) * 5.0 / 16.0))
-				asciifxObj.Space[i+1][j].G += uint8(math.Round(float64(errors.G) * 5.0 / 16.0))
-				asciifxObj.Space[i+1][j].B += uint8(math.Round(float64(errors.B) * 5.0 / 16.0))
-				asciifxObj.Space[i+1][j].I += uint8(math.Round(float64(errors.I) * 5.0 / 16.0))
+				asciifxObj.Space[i+1][j].R = asciifx.Clamp(int(asciifxObj.Space[i+1][j].R) + int(math.Round(float64(errors[0])*5.0/16.0)))
+				asciifxObj.Space[i+1][j].G = asciifx.Clamp(int(asciifxObj.Space[i+1][j].G) + int(math.Round(float64(errors[1])*5.0/16.0)))
+				asciifxObj.Space[i+1][j].B = asciifx.Clamp(int(asciifxObj.Space[i+1][j].B) + int(math.Round(float64(errors[2])*5.0/16.0)))
+				asciifxObj.Space[i+1][j].I = asciifx.Clamp(int(asciifxObj.Space[i+1][j].I) + int(math.Round(float64(errors[3])*5.0/16.0)))
 
-				if j < asciifxObj.Width-1 {
-					asciifxObj.Space[i+1][j+1].R += uint8(math.Round(float64(errors.R) * 1.0 / 16.0))
-					asciifxObj.Space[i+1][j+1].G += uint8(math.Round(float64(errors.G) * 1.0 / 16.0))
-					asciifxObj.Space[i+1][j+1].B += uint8(math.Round(float64(errors.B) * 1.0 / 16.0))
-					asciifxObj.Space[i+1][j+1].I += uint8(math.Round(float64(errors.I) * 1.0 / 16.0))
+				if j+1 < asciifxObj.Width {
+					asciifxObj.Space[i+1][j+1].R = asciifx.Clamp(int(asciifxObj.Space[i+1][j+1].R) + int(math.Round(float64(errors[0])*1.0/16.0)))
+					asciifxObj.Space[i+1][j+1].G = asciifx.Clamp(int(asciifxObj.Space[i+1][j+1].G) + int(math.Round(float64(errors[1])*1.0/16.0)))
+					asciifxObj.Space[i+1][j+1].B = asciifx.Clamp(int(asciifxObj.Space[i+1][j+1].B) + int(math.Round(float64(errors[2])*1.0/16.0)))
+					asciifxObj.Space[i+1][j+1].I = asciifx.Clamp(int(asciifxObj.Space[i+1][j+1].I) + int(math.Round(float64(errors[3])*1.0/16.0)))
 				}
 			}
 		}

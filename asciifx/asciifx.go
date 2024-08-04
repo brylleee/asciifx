@@ -93,3 +93,12 @@ func (asciifx *AsciiFx) allocateSpace() {
 func Remap[N int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64](x N, xmin N, xmax N, ymin N, ymax N) int {
 	return int(math.Round((float64(x-xmin)/float64(xmax-xmin))*float64(ymax-ymin) + float64(ymin)))
 }
+
+func Clamp(value int) uint8 {
+	if value < 0 {
+		return 0
+	} else if value > 255 {
+		return 255
+	}
+	return uint8(value)
+}
