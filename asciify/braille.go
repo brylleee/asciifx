@@ -38,9 +38,9 @@ func (braille Braille) GetRGBColors() [][]uint8 {
 	return braille.RGBColors
 }
 
-func (braille Braille) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
-	var result [][]rune = make([][]rune, asciifx.Height/4)
-	var line []rune = make([]rune, 0)
+func (braille Braille) Asciify(asciifx *asciifx.AsciiFx) []string {
+	var result []string = make([]string, asciifx.Height/4)
+	var line string
 
 	braille_unicode_offset := 0x2800
 	corresponding_char_offset := 0
@@ -52,12 +52,12 @@ func (braille Braille) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
 				int((asciifx.Space[i+2][j].I>>7)<<2) + int((asciifx.Space[i+2][j+1].I>>7)<<5) +
 				int((asciifx.Space[i+3][j].I>>7)<<6) + int((asciifx.Space[i+3][j+1].I>>7)<<7)
 
-			line = append(line, rune(braille_unicode_offset+corresponding_char_offset))
+			line += string(rune(braille_unicode_offset + corresponding_char_offset))
 			corresponding_char_offset = 0
 		}
 
 		result[ix] = line
-		line = []rune{}
+		line = ""
 	}
 
 	return result

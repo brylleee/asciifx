@@ -24,21 +24,30 @@ func getClosestColor(color asciifx.RGBI, rgbPalette [][]uint8, grayPalette []uin
 	closestMatch := (255 * 255) + (255 * 255) + (255 * 255) + 1
 	rgbMatchIndex, grayMatchIndex := 0, 0
 
-	for idx, i := range rgbPalette {
-		if getColorDistance(color, i) < closestMatch {
-			closestMatch = getColorDistance(color, i)
-			rgbMatchIndex = idx
-		}
-	}
-
 	grayStepSize := float64(255) / float64(len(grayPalette)-1)
 	grayMatchIndex = int(math.Round(float64(color.I) / grayStepSize))
 
-	return asciifx.RGBI{
-		R: rgbPalette[rgbMatchIndex][0],
-		G: rgbPalette[rgbMatchIndex][1],
-		B: rgbPalette[rgbMatchIndex][2],
-		I: grayPalette[grayMatchIndex],
+	if rgbPalette == nil {
+		return asciifx.RGBI{
+			R: color.R,
+			G: color.G,
+			B: color.B,
+			I: grayPalette[grayMatchIndex],
+		}
+	} else {
+		for idx, i := range rgbPalette {
+			if getColorDistance(color, i) < closestMatch {
+				closestMatch = getColorDistance(color, i)
+				rgbMatchIndex = idx
+			}
+		}
+
+		return asciifx.RGBI{
+			R: rgbPalette[rgbMatchIndex][0],
+			G: rgbPalette[rgbMatchIndex][1],
+			B: rgbPalette[rgbMatchIndex][2],
+			I: grayPalette[grayMatchIndex],
+		}
 	}
 }
 

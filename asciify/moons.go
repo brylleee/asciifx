@@ -38,27 +38,27 @@ func (moons Moons) GetRGBColors() [][]uint8 {
 	return moons.RGBColors
 }
 
-func (moons Moons) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
-	var result [][]rune = make([][]rune, asciifx.Height/4)
-	var line []rune = make([]rune, 0)
+func (moons Moons) Asciify(asciifx *asciifx.AsciiFx) []string {
+	var result []string = make([]string, asciifx.Height/4)
+	var line string
 
-	moonValues := map[[4]uint]rune{
-		{0, 0, 0, 0}: '🌑',
-		{1, 0, 0, 1}: '🌑',
-		{0, 0, 0, 1}: '🌒',
-		{0, 0, 1, 0}: '🌒',
-		{0, 0, 1, 1}: '🌓',
-		{0, 1, 0, 1}: '🌓',
-		{0, 1, 1, 1}: '🌔',
-		{1, 0, 1, 1}: '🌔',
-		{0, 1, 1, 0}: '🌕',
-		{1, 1, 1, 1}: '🌕',
-		{1, 1, 0, 1}: '🌖',
-		{1, 1, 1, 0}: '🌖',
-		{1, 1, 0, 0}: '🌗',
-		{1, 0, 1, 0}: '🌗',
-		{1, 0, 0, 0}: '🌘',
-		{0, 1, 0, 0}: '🌘',
+	moonValues := map[[4]uint]string{
+		{0, 0, 0, 0}: "🌑",
+		{1, 0, 0, 1}: "🌑",
+		{0, 0, 0, 1}: "🌒",
+		{0, 0, 1, 0}: "🌒",
+		{0, 0, 1, 1}: "🌓",
+		{0, 1, 0, 1}: "🌓",
+		{0, 1, 1, 1}: "🌔",
+		{1, 0, 1, 1}: "🌔",
+		{0, 1, 1, 0}: "🌕",
+		{1, 1, 1, 1}: "🌕",
+		{1, 1, 0, 1}: "🌖",
+		{1, 1, 1, 0}: "🌖",
+		{1, 1, 0, 0}: "🌗",
+		{1, 0, 1, 0}: "🌗",
+		{1, 0, 0, 0}: "🌘",
+		{0, 1, 0, 0}: "🌘",
 	}
 
 	for i, ix := 0, 0; i+4 < asciifx.Height; func() { i += 4; ix++ }() {
@@ -70,11 +70,11 @@ func (moons Moons) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
 				uint(asciifx.Space[i][j+3].I >> 7),
 			}
 
-			line = append(line, moonValues[moonValue])
+			line += moonValues[moonValue]
 		}
 
 		result[ix] = line
-		line = []rune{}
+		line = ""
 	}
 
 	return result

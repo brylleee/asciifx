@@ -38,18 +38,18 @@ func (blocks Blocks) GetRGBColors() [][]uint8 {
 	return blocks.RGBColors
 }
 
-func (blocks Blocks) Asciify(asciifx *asciifx.AsciiFx) [][]rune {
-	var result [][]rune = make([][]rune, asciifx.Height)
-	var line []rune = make([]rune, 0)
-	blockValues := []rune{'░', '▒', '▓', '█'}
+func (blocks Blocks) Asciify(asciifx *asciifx.AsciiFx) []string {
+	var result []string = make([]string, asciifx.Height)
+	var line string
+	blockValues := []string{"░", "▒", "▓", "█"}
 
 	for idxi, i := range asciifx.Space {
 		for idxj := range i {
-			line = append(line, []rune{blockValues[asciifx.Space[idxi][idxj].I>>6], blockValues[asciifx.Space[idxi][idxj].I>>6]}...)
+			line += blockValues[asciifx.Space[idxi][idxj].I>>6] + blockValues[asciifx.Space[idxi][idxj].I>>6]
 		}
 
 		result[idxi] = line
-		line = []rune{}
+		line = ""
 	}
 
 	return result

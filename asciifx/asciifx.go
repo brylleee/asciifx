@@ -36,7 +36,8 @@ type AsciiFx struct {
 
 // Load loads an image supplied as a string image path to an AsciiFx struct
 // It reads the image then initializes the width and height as well as
-// allocating the space it will work on
+// allocating the space it will work on. It returns an error if the image can't be decoded
+// and nil if everything is successful
 func (asciifx *AsciiFx) Load(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
@@ -60,7 +61,7 @@ func (asciifx *AsciiFx) Load(path string) error {
 
 // Conver converts the image loaded in AsciiFx to ascii arts employing user chose dithering alogrithm
 // and asciify method. It returns the result as a 2D array of runes
-func (asciifx *AsciiFx) Convert(ditherAlgorithm Dithering, downsampler Downsampler, asciify Asciify) [][]rune {
+func (asciifx *AsciiFx) Convert(ditherAlgorithm Dithering, downsampler Downsampler, asciify Asciify) []string {
 	asciifx.extractColors()
 	asciifx.DitheringChoice = ditherAlgorithm
 	asciifx.DownsamplerChoice = downsampler
@@ -90,10 +91,14 @@ func (asciifx *AsciiFx) allocateSpace() {
 	}
 }
 
+// Remap remaps x where it falls within a range from xmin to xmax to a new range from ymin to ymax
+// It accepts all integer data types but returns an int data type.
 func Remap[N int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64](x N, xmin N, xmax N, ymin N, ymax N) int {
 	return int(math.Round((float64(x-xmin)/float64(xmax-xmin))*float64(ymax-ymin) + float64(ymin)))
 }
 
+// Clamp clamps an integer value so that it can only be between 0 - 255
+// It returns a clamped uint8 value
 func Clamp(value int) uint8 {
 	if value < 0 {
 		return 0
