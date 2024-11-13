@@ -3,17 +3,18 @@ package asciify
 import (
 	"fmt"
 	"math"
+	"sync"
 
 	"github.com/brylleee/asciifx/asciifx"
 )
 
-type HTMLCode struct {
+type ANSICode struct {
 	SupportsColor bool
 	GrayColors    []uint8
 	RGBColors     [][]uint8
 }
 
-func UseHTMLCode() HTMLCode {
+func UseANSICode() ANSICode {
 	const SUPPORTS_COLOR bool = true
 	const GRAY_COLORS_SIZE int = 256
 	var RGB_COLORS [][]uint8 = nil // nil means full support color
@@ -24,33 +25,41 @@ func UseHTMLCode() HTMLCode {
 		grayColors[i] = uint8(math.Round(float64(255)/float64(GRAY_COLORS_SIZE-1))) * uint8(i)
 	}
 
-	return HTMLCode{
+	return ANSICode{
 		SupportsColor: SUPPORTS_COLOR,
 		GrayColors:    grayColors,
 		RGBColors:     RGB_COLORS,
 	}
 }
 
-func (htmlCode HTMLCode) GetGrayColors() []uint8 {
-	return htmlCode.GrayColors
+func (ansiCode ANSICode) GetGrayColors() []uint8 {
+	return ansiCode.GrayColors
 }
 
-func (htmlCode HTMLCode) GetRGBColors() [][]uint8 {
-	return htmlCode.RGBColors
+func (ansiCode ANSICode) GetRGBColors() [][]uint8 {
+	return ansiCode.RGBColors
 }
 
-func (htmlCode HTMLCode) Asciify(asciifxObj *asciifx.AsciiFx) []string {
+func (ansiCode ANSICode) Asciify(asciifxObj *asciifx.AsciiFx) []string {
 	var result []string = make([]string, asciifxObj.Height)
 	var line string
 
+	var wg sync.WaitGroup
+
 	for i := 0; i < asciifxObj.Height; i++ {
 		for j := 0; j < asciifxObj.Width; j++ {
-			line += fmt.Sprintf("<span style=\"color:#%02x%02x%02x;\">██</span>", asciifxObj.Space[i][j].R, asciifxObj.Space[i][j].G, asciifxObj.Space[i][j].B)
+			wg.Add(1)
+
+			go func() {
+				defer wg.Done()
+				line += fmt.Sprintf("\033[38;2;%d;%d;%dm██", asciifxObj.Space[i][j].R, asciifxObj.Space[i][j].G, asciifxObj.Space[i][j].B)
+			}()
 		}
 
 		result[i] = line
 		line = ""
 	}
 
+	wg.Wait()
 	return result
 }

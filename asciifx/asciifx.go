@@ -4,6 +4,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"sync"
 
 	"image"
 	_ "image/jpeg"
@@ -74,13 +75,20 @@ func (asciifx *AsciiFx) Convert(ditherAlgorithm Dithering, downsampler Downsampl
 
 // extractColors extracts every color in the image loaded in AsciiFx and stores it in the Space property of AsciiFx
 func (asciifx *AsciiFx) extractColors() {
+	var wg sync.WaitGroup
 	for i := 0; i < asciifx.Height; i++ {
 		for j := 0; j < asciifx.Width; j++ {
-			r, g, b, _ := asciifx.Image.At(j, i).RGBA()
-			asciifx.Space[i][j] = RGBI{R: uint8(r >> 8), G: uint8(g >> 8), B: uint8(b >> 8),
-				I: uint8(math.Round(0.299*float64(r))) + uint8(math.Round(0.587*float64(g))) + uint8(math.Round(0.114*float64(b)))}
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				r, g, b, _ := asciifx.Image.At(j, i).RGBA()
+				asciifx.Space[i][j] = RGBI{R: uint8(r >> 8), G: uint8(g >> 8), B: uint8(b >> 8),
+					I: uint8(math.Round(0.299*float64(r))) + uint8(math.Round(0.587*float64(g))) + uint8(math.Round(0.114*float64(b)))}
+			}()
 		}
 	}
+
+	wg.Wait()
 }
 
 // allocateSpace allocates Space values according to the width and height of the image loaded in AsciiFx
