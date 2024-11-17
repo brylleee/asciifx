@@ -3,7 +3,6 @@ package asciify
 import (
 	"fmt"
 	"math"
-	"sync"
 
 	"github.com/brylleee/asciifx/asciifx"
 )
@@ -44,22 +43,14 @@ func (ansiCode ANSICode) Asciify(asciifxObj *asciifx.AsciiFx) []string {
 	var result []string = make([]string, asciifxObj.Height)
 	var line string
 
-	var wg sync.WaitGroup
-
 	for i := 0; i < asciifxObj.Height; i++ {
 		for j := 0; j < asciifxObj.Width; j++ {
-			wg.Add(1)
-
-			go func() {
-				defer wg.Done()
-				line += fmt.Sprintf("\033[38;2;%d;%d;%dm██", asciifxObj.Space[i][j].R, asciifxObj.Space[i][j].G, asciifxObj.Space[i][j].B)
-			}()
+			line += fmt.Sprintf("\033[38;2;%d;%d;%dm██", asciifxObj.Space[i][j].R, asciifxObj.Space[i][j].G, asciifxObj.Space[i][j].B)
 		}
 
 		result[i] = line
 		line = ""
 	}
 
-	wg.Wait()
 	return result
 }
