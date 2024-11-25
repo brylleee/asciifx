@@ -3,6 +3,12 @@ An image to text-art command-line and library converter!
 
 ![Preview Image](https://github.com/brylleee/asciifx/blob/main/images/preview.png?raw=true)
 
+### Use Cases
+1) Displaying images on a headless server (you only have access to the terminal prompt)
+2) Creating banners / comment arts for your projects and documentations
+3) Spam others with funny outputs you just created
+4) Just have fun with it
+
 ### How to use
 You can use asciifx as a library in your already existing **Go** projects or as a command-line application.
 
